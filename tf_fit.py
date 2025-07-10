@@ -1,21 +1,18 @@
-import matplotlib.pyplot as plt
+import os
 
-from tensorflow.keras.callbacks import EarlyStopping
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+import matplotlib.pyplot as plt
 
 from config import epochs, model_name
 from tf_dataset import train_ds, validation_ds
 from tf_model import model
 
-# Обучение модели с использованием EarlyStopping
-early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, restore_best_weights=True)
-
 history = model.fit(
     train_ds,
     validation_data=validation_ds,
     epochs=epochs,
-    callbacks=[early_stopping]
 )
-
 # Визуализация результатов обучения и валидации
 acc = history.history['accuracy']
 validation_acc = history.history['val_accuracy']

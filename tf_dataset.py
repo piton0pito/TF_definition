@@ -1,9 +1,11 @@
 import os.path
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 import tensorflow as tf
 import pathlib
 
-from config import img_height, img_width, batch_size, output_folder, input_folder
+from config import img_height, img_width, batch_size, output_folder, input_folder, seed
 
 # Определяем директорию с набором данных
 if os.path.isdir(output_folder):
@@ -28,7 +30,7 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
     dataset_dir,
     validation_split=0.2,
     subset='training',
-    seed=512,
+    seed=seed,
     image_size=(img_height, img_width),
     batch_size=batch_size
 )
@@ -38,7 +40,7 @@ validation_ds = tf.keras.utils.image_dataset_from_directory(
     dataset_dir,
     validation_split=0.2,
     subset='validation',
-    seed=512,
+    seed=seed,
     image_size=(img_height, img_width),
     batch_size=batch_size
 )

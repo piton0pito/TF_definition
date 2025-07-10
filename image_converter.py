@@ -1,70 +1,72 @@
 import os
-import pathlib
-
 from PIL import Image
-
-from config import input_folder, output_folder
 from progress_bar import ProgressBar
 
 
-def count_total_images(folder):
-    """Подсчитывает общее количество PNG изображений во всех подпапках"""
-    total = 0
-    for subfolder in os.listdir(folder):
-        subfolder_path = os.path.join(folder, subfolder)
-        if os.path.isdir(subfolder_path):
-            total += len([f for f in os.listdir(subfolder_path)])
-    return total
+def count_png_images(root_folder):
+    total_images = 0
+    for foldername, subfolders, filenames in os.walk(root_folder):
+        for filename in filenames:
+            if filename.lower().endswith('.png'):
+                total_images += 1
+    return total_images
 
 
-def process_images(input_folder, output_folder):
-    # Проверяем и создаем выходную папку при необходимости
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
+def convert_images_to_jpg(root_folder):
     # Инициализируем прогресс-бар
-    total_images = count_total_images(input_folder)
+    total_images = count_png_images(root_folder)
     progress = ProgressBar(
         total=total_images,
         prefix='Обработка изображений:',
         suffix='Выполнено',
         length=30
     )
-    print(f"Найдено изображений для обработки: {total_images}")
 
-    # Проходим по всем подпапкам в входной папке
-    for subfolder in os.listdir(input_folder):
-        subfolder_path = os.path.join(input_folder, subfolder)
+    for foldername, subfolders, filenames in os.walk(root_folder):
+        # Получаем имя папки
+        folder_name = os.path.basename(foldername)
+        # Счетчик для порядкового номера
+        counter = 1
 
-        # Проверяем, что это папка
-        if os.path.isdir(subfolder_path):
-            # Получаем список PNG файлов в подпапке
-            png_files = [f for f in os.listdir(subfolder_path)]
+        for filename in filenames:
+            if filename.lower().endswith('.png'):
+                # Полный путь к изображению
+                png_image_path = os.path.join(foldername, filename)
 
-            # Обрабатываем каждый PNG файл
-            for i, png_file in enumerate(png_files, start=1):
                 try:
-                    # Формируем пути к файлам
-                    input_path = os.path.join(subfolder_path, png_file)
-                    output_filename = f"{subfolder}_{i}.jpg"
-                    output_path = os.path.join(output_folder, output_filename)
+                    # Открываем изображение
+                    with Image.open(png_image_path) as img:
+                        # Конвертируем в RGB (JPG не поддерживает альфа-канал)
+                        rgb_image = img.convert('RGB')
 
-                    # Открываем изображение, конвертируем в ч/б и сохраняем как JPG
-                    with Image.open(input_path) as img:
-                        bw_img = img.convert('L')
-                        bw_img.save(output_path, 'JPEG', quality=95)
+                        # Создаем новое имя файла
+                        new_filename = f"{folder_name}_{counter}.jpg"
+                        jpg_image_path = os.path.join(foldername, new_filename)
 
-                    # Обновляем прогресс-бар
-                    progress.update(1)
+                        # Сохраняем изображение в формате JPG
+                        rgb_image.save(jpg_image_path, 'JPEG')
+
+                        # Удаляем исходное PNG изображение
+                        os.remove(png_image_path)
+
+                        # Увеличиваем счетчик
+                        counter += 1
+
+                        # Обновляем прогресс-бар
+                        progress.update(1)
 
                 except Exception as e:
-                    print(f"\nОшибка при обработке {input_path}: {str(e)}")
-                    continue
+                    print(f"Ошибка при обработке файла {png_image_path}: {e}")
 
-    # Завершаем прогресс-бар
     progress.complete()
-    print("\nВсе изображения обработаны!")
 
 
-if __name__ == "__main__":
-    process_images(input_folder, output_folder)
+# Укажите путь к корневой папке
+root_folder = 'D:\\PyCarm Progect\\Sum_practic\\data'
+
+# Считаем количество изображений перед конвертацией
+total_images = count_png_images(root_folder)
+print(f"Общее количество изображений для конвертации: {total_images}")
+
+# Запускаем конвертацию
+convert_images_to_jpg(root_folder)

@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 import tensorflow as tf
 
 from tensorflow.keras import layers, Sequential
@@ -8,7 +11,8 @@ from tf_dataset import class_names
 # Создаем модель
 num_classes = len(class_names)
 model = Sequential([
-    layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
+    layers.Input(shape=(img_height, img_width, 3)),
+    layers.Rescaling(1./255),
     layers.RandomFlip('horizontal'),
     layers.RandomRotation(0.1),
     layers.RandomZoom(0.1),
