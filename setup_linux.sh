@@ -26,10 +26,17 @@ case $MINOR_VERSION in
         ;;
 esac
 
-echo "Downloading TensorFlow for Python 3.$MINOR_VERSION..."
-wget "$TENSORFLOW_WHEEL_URL" || { echo "Download failed"; exit 1; }
-
+# Получаем имя файла из URL
 WHEEL_FILE=$(basename "$TENSORFLOW_WHEEL_URL")
+
+# Проверяем, существует ли уже файл
+if [ -f "$WHEEL_FILE" ]; then
+    echo "File $WHEEL_FILE already exists, skipping download."
+else
+    echo "Downloading TensorFlow for Python 3.$MINOR_VERSION..."
+    wget "$TENSORFLOW_WHEEL_URL" || { echo "Download failed"; exit 1; }
+fi
+
 echo "Installing TensorFlow from $WHEEL_FILE..."
 pip install "$WHEEL_FILE" || { echo "Installation failed"; exit 1; }
 
