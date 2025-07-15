@@ -12,12 +12,15 @@ from tf_dataset import class_names
 num_classes = len(class_names)
 model = Sequential([
     layers.Input(shape=(img_height, img_width, 3)),
+
+    # Параметры для изменения изображений для увеличения входных данных
     layers.Rescaling(1./255),
     layers.RandomFlip('horizontal'),
     layers.RandomRotation(0.1),
     layers.RandomZoom(0.1),
     layers.RandomContrast(0.2),
 
+    # Слои нейронной сети
     layers.Conv2D(16, 3, padding='same', activation='relu'),
     layers.MaxPooling2D(),
 
