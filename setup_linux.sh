@@ -53,4 +53,4 @@ else
 fi
 
 echo "DONE"
-echo "To activate the virtual environment later, run: source venv/bin/activate"
+echo "Для активации виртуального окружения, выполните: source venv/bin/activate"

@@ -66,4 +66,4 @@ if exist "requirements.txt" (
 )
 
 echo DONE
-echo To activate the virtual environment later, run: venv\Scripts\activate
+echo Для активации виртуального окружения, выполните: venv\Scripts\activate

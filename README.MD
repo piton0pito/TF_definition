@@ -40,6 +40,10 @@
   chmod +x ./setup_linux.sh
   ./setup_linux.sh
   ```
+3. **Активация виртуального окружения**
+  ```bash
+  source venv/bin/activate
+  ```
 
 
 ## Инструкции по установке Windows
@@ -51,6 +55,10 @@
 2. **Установка зависимостей**
   ```bash
   ./setup_win.bat
+  ```
+3. **Активация виртуального окружения**
+  ```bash
+  venv\Scripts\activate
   ```
 
 ## Настройка конфига
