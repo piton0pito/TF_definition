@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Создаем и активируем виртуальное окружение
+python3 -m venv venv
+source venv/bin/activate
+
 # Получаем версию Python
 PYTHON_VERSION=$(python3 --version | cut -d " " -f 2)
 
@@ -49,3 +53,4 @@ else
 fi
 
 echo "DONE"
+echo "To activate the virtual environment later, run: source venv/bin/activate"

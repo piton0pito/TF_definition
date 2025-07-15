@@ -1,5 +1,19 @@
 @echo off
 
+REM Создаем виртуальное окружение
+echo Creating virtual environment...
+python -m venv venv || (
+    echo Failed to create virtual environment
+    exit /b 1
+)
+
+REM Активируем виртуальное окружение
+echo Activating virtual environment...
+call venv\Scripts\activate || (
+    echo Failed to activate virtual environment
+    exit /b 1
+)
+
 REM Получаем версию Python
 for /f "tokens=2 delims= " %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
 
@@ -20,13 +34,20 @@ if "%MINOR_VERSION%"=="9" (
     exit /b 1
 )
 
-echo Downloading TensorFlow for Python 3.%MINOR_VERSION%...
-curl -O %TENSORFLOW_WHEEL_URL% || (
-    echo Download failed
-    exit /b 1
+REM Получаем имя файла из URL
+for %%i in ("%TENSORFLOW_WHEEL_URL%") do set WHEEL_FILE=%%~nxi
+
+REM Проверяем, существует ли уже файл
+if exist "%WHEEL_FILE%" (
+    echo File %WHEEL_FILE% already exists, skipping download.
+) else (
+    echo Downloading TensorFlow for Python 3.%MINOR_VERSION%...
+    curl -O %TENSORFLOW_WHEEL_URL% || (
+        echo Download failed
+        exit /b 1
+    )
 )
 
-for %%i in ("%TENSORFLOW_WHEEL_URL%") do set WHEEL_FILE=%%~nxi
 echo Installing TensorFlow from %WHEEL_FILE%...
 pip install %WHEEL_FILE% || (
     echo Installation failed
@@ -45,3 +66,4 @@ if exist "requirements.txt" (
 )
 
 echo DONE
+echo To activate the virtual environment later, run: venv\Scripts\activate
